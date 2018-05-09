@@ -1,20 +1,21 @@
-import * as firebase from 'firebase';
+import { auth } from './firebase';
 
-const config = {
-    apiKey: "AIzaSyA62nY1-Y5tW4MLGpae8q-grcaa-Ai18h4",
-    authDomain: "aprendendo-firebase-c5341.firebaseapp.com",
-    databaseURL: "https://aprendendo-firebase-c5341.firebaseio.com",
-    projectId: "aprendendo-firebase-c5341",
-    storageBucket: "aprendendo-firebase-c5341.appspot.com",
-    messagingSenderId: "387535528075"
-};
+// Sign Up
+export const doCreateUserWithEmailAndPassword = (email, password) =>
+    auth.createUserWithEmailAndPassword(email, password);
 
-if (!firebase.apps.length) {
-    firebase.initializeApp(config);
-}
+// Sign In
+export const doSignInWithEmailAndPassword = (email, password) =>
+    auth.signInWithEmailAndPassword(email, password);
 
-const auth = firebase.auth();
+// Sign out
+export const doSignOut = () =>
+    auth.signOut();
 
-export {
-    auth,
-};
+// Password Reset
+export const doPasswordReset = (email) =>
+    auth.sendPasswordResetEmail(email);
+
+// Password Change
+export const doPasswordUpdate = (password) =>
+    auth.currentUser.updatePassword(password);
