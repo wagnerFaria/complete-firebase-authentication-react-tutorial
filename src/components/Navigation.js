@@ -1,29 +1,84 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import SignOutButton from './SignOut';
+import SignOutNav from './SignOut';
 import * as routes from '../constants/routes';
 import AuthUserContext from './AuthUserContext';
+import Auxiliary from '../hoc/Auxiliary/Auxiliary';
+import { auth } from '../firebase';
+import {
+    Collapse,
+    Navbar,
+    NavbarToggler,
+    NavbarBrand,
+    Nav,
+    NavItem,
+    NavLink
+} from 'reactstrap';
 
-const Navigation = () =>
-    <AuthUserContext.Consumer>
-        {authUser => authUser
-            ? <NavigationAuth />
-            : <NavigationNonAuth />
-        }
-    </AuthUserContext.Consumer>
+export default class Navigation extends React.Component {
+    constructor(props) {
+        super(props);
 
-const NavigationAuth = () =>
-    <ul>
-        <li><Link to={routes.LANDING}>Landing</Link></li>
-        <li><Link to={routes.HOME}>Home</Link></li>
-        <li><Link to={routes.ACCOUNT}>Account</Link></li>
-        <li><SignOutButton /></li>
-    </ul>
+        this.toggle = this.toggle.bind(this);
+        this.state = {
+            isOpen: false
+        };
+    }
+    toggle() {
+        this.setState({
+            isOpen: !this.state.isOpen
+        });
+    }
+    onSignOutClicked = () => {
+        auth.doSignOut().then(() => {
+            this.props.history.push(routes.LANDING);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+    render() {
+        return (
+            <div>
+                <Navbar color="light" light expand="md">
+                    <NavbarBrand href="/">FIREBASE AUTH</NavbarBrand>
+                    <NavbarToggler onClick={this.toggle} />
+                    <Collapse isOpen={this.state.isOpen} navbar>
+                        <Nav className="ml-auto" navbar>
+                            <AuthUserContext.Consumer>
+                                {authUser => authUser
+                                    ? <NavigationAuth />
+                                    : <NavigationNonAuth />
+                                }
+                            </AuthUserContext.Consumer>
 
-const NavigationNonAuth = () =>
-    <ul>
-        <li><Link to={routes.LANDING}>Landing</Link></li>
-        <li><Link to={routes.SIGN_IN}>Sign In</Link></li>
-    </ul>
+                        </Nav>
+                    </Collapse>
+                </Navbar>
+            </div>
+        );
+    }
+}
+const NavigationAuth = () => (
+    <Auxiliary>
+        <NavItem>
+            <NavLink href={routes.LANDING}>Landing</NavLink>
+        </NavItem>
+        <NavItem>
+            <NavLink href={routes.HOME}>Home</NavLink>
+        </NavItem>
+        <NavItem>
+            <NavLink href={routes.ACCOUNT}>Account</NavLink>
+        </NavItem>
+        <SignOutNav />
+    </Auxiliary>
+);
 
-export default Navigation;
+const NavigationNonAuth = () => (
+    <Auxiliary>
+        <NavItem>
+            <NavLink href={routes.LANDING}>Landing</NavLink>
+        </NavItem>
+        <NavItem>
+            <NavLink href={routes.SIGN_IN}>Sign In</NavLink>
+        </NavItem>
+    </Auxiliary>
+);

@@ -14,12 +14,8 @@ class HomePage extends Component {
 
     componentDidMount() {
         db.onceGetUsers().then(snapshot => {
-            console.log('SNAPSHOT');
-            console.log(snapshot);
             this.setState(() => ({ users: snapshot.val() }))
         });
-        console.log('USERS TABLE');
-        console.log(this.state.users);
     }
 
     render() {
@@ -42,7 +38,7 @@ const UserList = ({ users }) =>
             <div key={key}>{users[key].username}</div>
         )}
     </div>
-    
+
 const authCondition = (authUser) => !!authUser;
 
 export default withAuthorization(authCondition)(HomePage);
